@@ -1,6 +1,9 @@
 package com.example.composelogin.ui.screen
 
-import android.app.DatePickerDialog
+import android.content.Context
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,27 +13,39 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.composelogin.ui.viewModel.LoginViewModel
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserInputScreen(
   viewModel: LoginViewModel = hiltViewModel(),
 //  onSubmit: (String, Int, String, String) -> Unit
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val context = LocalContext.current
 
   Column(
     modifier = Modifier
@@ -47,14 +62,14 @@ fun UserInputScreen(
 
     OutlinedTextField(
       value = uiState.name,
-      onValueChange = { uiState.name = it },
+      onValueChange = { viewModel.onNameChange(it) },
       label = { Text("Name") },
       modifier = Modifier.fillMaxWidth()
     )
 
     OutlinedTextField(
       value = uiState.age,
-      onValueChange = { uiState.age = it },
+      onValueChange = { viewModel.onAgeChange(it) },
       label = { Text("Age") },
       keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
       modifier = Modifier.fillMaxWidth()
@@ -66,26 +81,20 @@ fun UserInputScreen(
       label = { Text("Date of Birth") },
       readOnly = true,
       trailingIcon = {
-        IconButton(onClick = { uiState.showDatePicker = true }) {
+        IconButton(onClick = { viewModel.onShowDatePicker() }) {
           Icon(imageVector = Icons.Default.DateRange, contentDescription = "Pick Date")
         }
       },
       modifier = Modifier.fillMaxWidth()
     )
 
-//    if (uiState.showDatePicker) {
-//      DatePickerDialog(
-//        onDismissRequest = { uiState.showDatePicker = false },
-//        onDateSelected = { selectedDate ->
-//          uiState.dob = selectedDate
-//          uiState.showDatePicker = false
-//        }
-//      )
-//    }
+    if (uiState.showDatePicker) {
+      CalendarDatePicker(viewModel,context)
+    }
 
     OutlinedTextField(
       value = uiState.address,
-      onValueChange = { uiState.address = it },
+      onValueChange = { viewModel.onAddressChange(it) },
       label = { Text("Address") },
       modifier = Modifier.fillMaxWidth()
     )
@@ -109,5 +118,44 @@ fun UserInputScreen(
     ) {
       Text(text = "Submit")
     }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CalendarDatePicker(viewModel: LoginViewModel, context: Context) {
+  val datePickerState = rememberDatePickerState()
+
+  DatePickerDialog(
+    onDismissRequest = { viewModel.onShowDatePicker() },
+    confirmButton = {
+      TextButton(
+        onClick = {
+          val selectedDateMillis = datePickerState.selectedDateMillis
+          if (selectedDateMillis != null) {
+            val selectedDate = LocalDate.ofInstant(
+              Date(selectedDateMillis).toInstant(),
+              ZoneId.systemDefault()
+            )
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val formattedDate = selectedDate.format(formatter)
+            viewModel.onShowDatePicker()
+            viewModel.onDatePicked(formattedDate)
+          }
+          else{
+            Toast.makeText(context, "Please select a date", Toast.LENGTH_SHORT).show()
+          }
+        }){
+        Text("OK")
+      }
+    },
+
+    dismissButton = {
+      TextButton(onClick = { viewModel.onShowDatePicker() }) {
+        Text("Cancel")
+      }
+    },
+  ) {
+    DatePicker(state = datePickerState)
   }
 }
