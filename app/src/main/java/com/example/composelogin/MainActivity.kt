@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.composelogin.ui.screen.UserInputScreen
 import com.example.composelogin.ui.theme.ComposeLoginTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -25,14 +27,5 @@ class MainActivity : ComponentActivity() {
         }
       }
     }
-  }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-  ComposeLoginTheme {
-    UserInputScreen()
   }
 }

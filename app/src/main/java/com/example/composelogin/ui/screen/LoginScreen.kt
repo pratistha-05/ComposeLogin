@@ -40,7 +40,9 @@ fun UserInputScreen(
   ) {
     Text(
       text = "User Details",
-      modifier = Modifier.align(Alignment.CenterHorizontally)
+      modifier = Modifier
+        .padding(top = 20.dp)
+        .align(Alignment.CenterHorizontally)
     )
 
     OutlinedTextField(

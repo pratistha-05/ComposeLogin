@@ -1,6 +1,9 @@
 plugins {
   alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.jetbrains.kotlin.android)
+  id("kotlin-kapt")
+  id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -57,6 +60,7 @@ dependencies {
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
   testImplementation(libs.junit)
+  implementation(libs.kotlinx.serialization.json)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
   androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -69,6 +73,10 @@ dependencies {
   implementation(libs.coil.svg.compose)
   implementation(libs.material.icons.extended)
   implementation(libs.androidx.datastore)
-  implementation(libs.androidx.room.runtime)
-  implementation(libs.androidx.room.ktx)
+  implementation(libs.hilt.navigation.compose)
+  kapt(libs.hilt.android.compiler.v2511)
+  implementation ("androidx.room:room-runtime:2.6.1")
+  kapt ("androidx.room:room-compiler:2.6.1")
+
+  implementation ("androidx.room:room-ktx:2.6.1")
 }
