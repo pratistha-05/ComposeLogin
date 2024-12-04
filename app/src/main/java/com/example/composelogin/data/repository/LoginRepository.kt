@@ -9,8 +9,8 @@ class LoginRepository @Inject constructor(
 
   val usersList = dao.getAllUsers()
 
-  suspend fun insertUserData(coin: UserData){
-    dao.insertUserData(coin)
+  suspend fun insertUserData(userData: UserData){
+    dao.insertUserData(userData)
   }
 
 }

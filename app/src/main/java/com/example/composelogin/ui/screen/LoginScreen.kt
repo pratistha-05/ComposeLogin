@@ -2,6 +2,7 @@ package com.example.composelogin.ui.screen
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +32,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.composelogin.source.localdb.UserData
 import com.example.composelogin.ui.viewModel.LoginViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -42,7 +47,6 @@ import java.util.Date
 @Composable
 fun UserInputScreen(
   viewModel: LoginViewModel = hiltViewModel(),
-//  onSubmit: (String, Int, String, String) -> Unit
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val context = LocalContext.current
@@ -106,12 +110,17 @@ fun UserInputScreen(
           uiState.dob.isNotBlank() &&
           uiState.address.isNotBlank()
         ) {
-//          onSubmit(
-//            uiState.name,
-//            uiState.age.toIntOrNull() ?: 0,
-//            uiState.dob,
-//            uiState.address
-//          )
+          val userDetails = UserData(
+            name = uiState.name,
+            age = uiState.age,
+            dob = uiState.dob,
+            address = uiState.address
+          )
+            viewModel.insertUserDetails(userDetails)
+        }
+        else{
+          //TODO add checks individually
+          Toast.makeText(context, "Please enter all details", Toast.LENGTH_SHORT).show()
         }
       },
       modifier = Modifier.align(Alignment.End)
