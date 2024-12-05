@@ -34,16 +34,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.composelogin.source.localdb.UserData
 import com.example.composelogin.ui.viewModel.LoginViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserInputScreen(
   viewModel: LoginViewModel = hiltViewModel(),
@@ -119,7 +116,6 @@ fun UserInputScreen(
             viewModel.insertUserDetails(userDetails)
         }
         else{
-          //TODO add checks individually
           Toast.makeText(context, "Please enter all details", Toast.LENGTH_SHORT).show()
         }
       },

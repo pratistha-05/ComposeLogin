@@ -11,7 +11,7 @@ interface UserDao {
   @Query("SELECT * FROM login_database")
   fun getAllUsers(): Flow<List<UserData>>
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
   suspend fun insertUserData(data: UserData)
 
 }
